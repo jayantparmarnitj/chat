@@ -18,7 +18,7 @@ app.set('view engine', 'pug');
 
 
 mongoose.Promise = global.Promise;
-var promise = mongoose.connect('mongodb://jayant:123@ds119018.mlab.com:19018/uberdatabase', {
+var promise = mongoose.connect('mongodb://jayant:123@ds119018.mlab.com:19018/otpverification', {
   useMongoClient: true,
 });
 promise.then(function(db) {

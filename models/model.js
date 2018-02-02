@@ -7,4 +7,4 @@ var schema = new Schema({
      latitude: Number
 });
 
-module.exports = mongoose.model('driver_gps', schema);
+module.exports = mongoose.model('taskTable', schema);

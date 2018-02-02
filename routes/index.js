@@ -9,6 +9,6 @@ app.all('/allDrivers',controller.find_all_drivers);
 // app.all('/userLogin',controller.user_login);
 // app.all('/driverLogin',controller.driver_login);
 //app.post('/verifyOtp',controller.verify_otp);
-app.get('/',controller.list_card_data);
+app.get('/',controller.task_root);
 
 };

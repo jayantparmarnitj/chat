@@ -1,1 +1,1 @@
-web:  DEBUG=Uber:* npm start
+web:  DEBUG=Task:* npm start
