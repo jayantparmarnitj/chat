@@ -2,9 +2,13 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var schema = new Schema({
-    driverName:  String,
-     longitude:  Number,
-     latitude: Number
+   // messagesId: Number,
+    rid : String,
+    sid: String,
+    message : String,
+    sendTime:{ type: String, default: (new Date()).toISOString() } ,
+    seen:{type:Number,default:0}
+
 });
 
-module.exports = mongoose.model('taskTable', schema);
+module.exports = mongoose.model('tasktable', schema);

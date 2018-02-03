@@ -1,30 +1,61 @@
 'use strict';
 var mysql      = require('mysql');
 var mongoose = require('mongoose'),
-  Task = mongoose.model('taskTable');
+  Task = mongoose.model('tasktable');
 exports.task_root = function(req, res) {
   res.json({"hello":"jayant, This is your task"});
 };
-exports.find_all_drivers = function(req, res) {
+exports.get_message = function(req, res) {
   try{
-    var dname,long,lat;
-    var arr=[];
-    const driverName = JSON.stringify(req.body.driverName);
-    const Flongitude = JSON.stringify(req.body.longitude);
-    const Flatitude = JSON.stringify(req.body.latitude);
-
-
-   Task.find({},function (err, data) {
-
-      if (err) 
-        return console.log(err);
-      else if (data)
-      {
-          return res.status(200).json(data);
-      }
+    const message = req.body.message;
+    const frid = req.body.rid;
+    const fsid = req.body.sid;
+    console.log("fridf "+frid);
+    console.log("fsidf "+fsid);
+var arr=[];
+    var person_data = {
+      "message": message,
+      "rid": frid,
+      "sid": fsid,
       
-    });
+  };
+  
+  var person = new Task(person_data);
+  console.log(person);
+  
+        person.save( function(error, data){
+            if(error){
+              return console.log(err);
+            }
+            else{
+              console.log("data Inserted");
+              //return res.status(200).json(data);
+            }
+        });
 
+        Task.find({},function (err, result) {
+
+          if (err) 
+            return console.log(err);
+            console.log(result);
+            if(result.length)
+            {
+                    for(var i = 0; i<result.length; i++ )
+                    {
+                      if((result[i].sid==fsid && result[i].rid==frid) || (result[i].sid==frid && result[i].rid==fsid))
+                      {
+                        arr.push(result[i]);
+                      }
+                    }
+           
+         
+                if(arr.length==0)
+                    return  res.status(200).json({success:0,msg:"Conversation does not exist"});
+                  else
+                  return res.status(200).json(arr);
+            }
+          
+        });
 
     }
   catch(e){
@@ -32,62 +63,24 @@ exports.find_all_drivers = function(req, res) {
   }
 };
 
-
-function findD(lat1,lon1,lat2,lon2) {
-  var R = 6371; // Radius of the earth in km
-  var dLat = deg2rad(lat2-lat1);  // deg2rad below
-  var dLon = deg2rad(lon2-lon1);
-  var a =
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-    Math.sin(dLon/2) * Math.sin(dLon/2)
-    ;
-  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  var d = R * c; // Distance in km
-  return d;
-}
-function deg2rad(deg) {
-  return deg * (Math.PI/180)
-}
-exports.find_nearest_drivers = function(req, res) {
+exports.seen_message = function(req, res) {
   try{
-    var dname,long,lat;
-var arr=[];
-    const driverName = JSON.stringify(req.body.driverName);
-    const Flongitude = JSON.stringify(req.body.longitude);
-    const Flatitude = JSON.stringify(req.body.latitude);
-    console.log("Flongitude: "+Flongitude);
-    console.log("Flatitude: "+Flatitude);
 
-            var min = 5;
-        
-            Task.find({},function (err, result) {
-
-              if (err) 
-                return console.log(err);
-                if(result.length)
-                {
-                  for(var radius=1;radius<=10;radius++)
-                  {
-                        for(var i = 0; i<result.length; i++ )
-                        {
-                          var d = findD(Flatitude,Flongitude,result[i].latitude,result[i].longitude);
-                          if(d<radius)
-                          {
-                            arr.push(result[i]);
-                          }
-                        }
-                      console.log("nearest drivers "+ arr.length);
-                      if(arr.length)
-                        break;
-                  }
-                    if(arr.length==0)
-                        return  res.status(200).json({success:0,msg:"Service not available"});
-                      else
-                      return res.status(200).json(arr);
-                }
-              
-            });
+     const frid = req.body.rid;
+     const fsid = req.body.sid;
+    console.log(fsid);
+   Task.find({sid:fsid,rid:frid}).updateMany({ $set: { seen: 1 }}).exec(function(err,result){
+     if(err)
+     {
+       console.log(err)
+     }
+     else{
+      console.log(result);
+      return  res.status(200).json({success:0,msg:"Messages have been seen"});
+     }
+   })
+  
+   
     }
   catch(e){
     return res.status(500).json({success:0,msg:e.message});

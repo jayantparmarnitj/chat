@@ -22,7 +22,7 @@ var promise = mongoose.connect('mongodb://jayant:123@ds119018.mlab.com:19018/otp
   useMongoClient: true,
 });
 promise.then(function(db) {
-    console.log("Connected to uberdatabase database!!!");
+    console.log("Connected to chatDatabase database!!!");
 }, function(err){
     console.log("Error in connecting database " + err);
 });
